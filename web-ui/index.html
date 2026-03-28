@@ -1,109 +1,476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kitchen Orders</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitchen Studio</title>
   <style>
-    :root { --bg:#0b1120; --card:#111827; --border:#263347; --text:#e5e7eb; --muted:#9ca3af; --blue:#58a6ff; --green:#3fb950; --red:#f78166; }
-    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); max-width: 880px; margin: 0 auto; padding: 28px 16px; }
-    h1 { margin: 0 0 10px; font-size: 28px; }
-    .sub { color: var(--muted); margin: 0 0 18px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-    .row { display:flex; gap:10px; align-items:center; }
-    input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: #0d1117; color: var(--text); }
-    button { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: rgba(88,166,255,.15); color: var(--text); cursor:pointer; }
-    button:hover { background: rgba(88,166,255,.25); }
-    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color: var(--muted); font-size: 12px; }
-    .ok { color: var(--green); }
-    .bad { color: var(--red); }
-    table { width:100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 10px 8px; border-bottom: 1px solid rgba(38,51,71,.65); text-align: left; }
-    th { color: var(--muted); font-weight: 600; }
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .footer { margin-top: 14px; color: var(--muted); font-size: 12px; }
-    @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+    :root {
+      --bg: #f5efe6;
+      --ink: #1f1a17;
+      --muted: #6b625a;
+      --card: rgba(255, 255, 255, 0.76);
+      --line: rgba(31, 26, 23, 0.12);
+      --accent: #b3482f;
+      --accent-2: #d79a36;
+      --ok: #2e8b57;
+      --bad: #b42318;
+      --shadow: 0 20px 50px rgba(76, 49, 25, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(215,154,54,.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(179,72,47,.16), transparent 24%),
+        linear-gradient(135deg, #faf6ef 0%, #efe3d0 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 18px 40px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .hero-card, .panel {
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(215,154,54,.34), rgba(179,72,47,.18));
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: .95;
+      letter-spacing: -.04em;
+    }
+
+    .sub {
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.6;
+      margin: 14px 0 24px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.58);
+      font-size: 13px;
+    }
+
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+
+    .hero-side {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-side h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .hero-side p {
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.5;
+    }
+
+    .hero-side a {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      border-top: 1px solid var(--line);
+      padding: 14px 0;
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .panel-note {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 14px;
+    }
+
+    .compose {
+      display: grid;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.82);
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+    }
+
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .65; cursor: wait; transform: none; }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), #8f2f1b);
+      color: #fff;
+    }
+
+    .secondary {
+      background: rgba(215,154,54,.16);
+      color: var(--ink);
+      border: 1px solid rgba(215,154,54,.35);
+    }
+
+    .message {
+      min-height: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .board-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      gap: 12px;
+    }
+
+    .order {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      padding: 14px 16px;
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .dish {
+      font-size: 19px;
+      margin: 0;
+    }
+
+    .status {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .status.pending { background: rgba(215,154,54,.18); color: #8a5a16; }
+    .status.preparing { background: rgba(88,119,255,.14); color: #3550b7; }
+    .status.ready { background: rgba(46,139,87,.15); color: var(--ok); }
+    .status.served { background: rgba(31,26,23,.09); color: var(--ink); }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mono {
+      font-family: "Courier New", monospace;
+      word-break: break-all;
+    }
+
+    .empty {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      text-align: center;
+      background: rgba(255,255,255,.45);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    @media (max-width: 920px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .input-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <h1>Kitchen Orders</h1>
-  <p class="sub">Create orders and watch them show up in MongoDB. This UI calls the API through a same-origin proxy at <code>/api</code>.</p>
-  <div class="grid">
-    <div class="card">
-      <div class="row" style="justify-content:space-between; margin-bottom:10px;">
-        <div class="pill">API status: <span id="apiStatus" class="bad">checking...</span></div>
-        <div class="row" style="gap:12px;">
-          <a href="/api/metrics" target="_blank" rel="noreferrer">/metrics</a>
-          <a href="/api/health" target="_blank" rel="noreferrer">/health</a>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">Kitchen App</span>
+        <h1>Kitchen Studio</h1>
+        <p class="sub">
+          A redesigned live order board for the kitchen team.
+          Create dishes, monitor API health, and watch order flow in a cleaner interface.
+        </p>
+        <div class="hero-stats">
+          <div class="pill">API status: <span id="apiStatus" class="bad">checking...</span></div>
+          <div class="pill">Orders tracked: <span id="orderCount">0</span></div>
+          <div class="pill"><a href="/api/metrics" target="_blank" rel="noreferrer">Open metrics</a></div>
         </div>
       </div>
-      <div class="row">
-        <input id="dish" placeholder="Dish name (e.g. Masala Dosa)" autocomplete="off" />
-        <button id="createBtn">Create order</button>
+
+      <aside class="hero-side hero-card">
+        <div>
+          <h2>Quick Links</h2>
+          <p>Useful endpoints for demo and validation.</p>
+        </div>
+        <div>
+          <a href="/api/health" target="_blank" rel="noreferrer">API Health</a>
+          <a href="/api/orders" target="_blank" rel="noreferrer">Orders Feed</a>
+          <a href="/api/metrics" target="_blank" rel="noreferrer">Prometheus Metrics</a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h3>Create New Order</h3>
+        <p class="panel-note">Submit a dish and let the kitchen simulation move it through the status stages.</p>
+        <div class="compose">
+          <div class="input-row">
+            <input id="dish" placeholder="Try: Paneer Butter Masala" autocomplete="off" />
+            <button id="createBtn" class="primary">Create Order</button>
+          </div>
+          <button id="refreshBtn" class="secondary">Refresh Orders</button>
+          <div id="createMsg" class="message"></div>
+        </div>
       </div>
-      <div class="footer" id="createMsg"></div>
-    </div>
-    <div class="card">
-      <div class="row" style="justify-content:space-between; margin-bottom:10px;">
-        <div class="pill">Orders: <span id="orderCount">0</span></div>
-        <div class="row"><button id="refreshBtn">Refresh</button></div>
+
+      <div class="panel">
+        <div class="board-head">
+          <div>
+            <h3>Live Orders Board</h3>
+            <div class="meta">Latest orders appear first.</div>
+          </div>
+        </div>
+        <div id="ordersBody" class="cards">
+          <div class="empty">Loading order board...</div>
+        </div>
       </div>
-      <div style="overflow:auto;">
-        <table>
-          <thead><tr><th>Dish</th><th>Status</th><th>Created</th><th>ID</th></tr></thead>
-          <tbody id="ordersBody"><tr><td colspan="4" style="color:var(--muted);">Loading...</td></tr></tbody>
-        </table>
-      </div>
-      <div class="footer">Tip: keep this page open, then hit Prometheus/Grafana to see <code>http_requests_total</code> increase.</div>
-    </div>
+    </section>
   </div>
+
   <script>
     const apiBase = '/api';
     const el = (id) => document.getElementById(id);
-    function fmtDate(v) { try { const d = new Date(v); if (Number.isNaN(d.getTime())) return ''; return d.toLocaleString(); } catch { return ''; } }
-    async function apiGet(path) { const r = await fetch(apiBase + path, { headers: { 'Accept': 'application/json' } }); return { r, data: await r.json().catch(() => null) }; }
-    async function refreshHealth() { const s = el('apiStatus'); try { const { r, data } = await apiGet('/health'); if (r.ok) { s.textContent = data?.db ? `ok (db: ${data.db})` : 'ok'; s.className = 'ok'; } else { s.textContent = `error (${r.status})`; s.className = 'bad'; } } catch (e) { s.textContent = 'offline'; s.className = 'bad'; } }
+
+    function fmtDate(v) {
+      try {
+        const d = new Date(v);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleString();
+      } catch {
+        return '';
+      }
+    }
+
+    function statusClass(status) {
+      return ['pending', 'preparing', 'ready', 'served'].includes(status) ? status : 'pending';
+    }
+
+    async function apiGet(path) {
+      const r = await fetch(apiBase + path, { headers: { Accept: 'application/json' } });
+      return { r, data: await r.json().catch(() => null) };
+    }
+
+    async function refreshHealth() {
+      const s = el('apiStatus');
+      try {
+        const { r, data } = await apiGet('/health');
+        if (r.ok) {
+          s.textContent = data?.db ? `ok (${data.db})` : 'ok';
+          s.className = 'ok';
+        } else {
+          s.textContent = `error ${r.status}`;
+          s.className = 'bad';
+        }
+      } catch {
+        s.textContent = 'offline';
+        s.className = 'bad';
+      }
+    }
+
     async function refreshOrders() {
       const body = el('ordersBody');
-      body.innerHTML = '<tr><td colspan="4" style="color:var(--muted);">Loading...</td></tr>';
+      body.innerHTML = '<div class="empty">Loading order board...</div>';
       try {
         const { r, data } = await apiGet('/orders');
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const orders = Array.isArray(data) ? data : [];
         el('orderCount').textContent = String(orders.length);
-        if (!orders.length) { body.innerHTML = '<tr><td colspan="4" style="color:var(--muted);">No orders yet. Create one on the left.</td></tr>'; return; }
-        body.innerHTML = orders.slice().reverse().map(o => {
+
+        if (!orders.length) {
+          body.innerHTML = '<div class="empty">No orders yet. Create your first order from the left panel.</div>';
+          return;
+        }
+
+        body.innerHTML = orders.slice().reverse().map((o) => {
           const id = (o && (o._id?.toString ? o._id.toString() : o._id)) || '';
-          return `<tr><td>${(o?.dish || '')}</td><td>${(o?.status || '')}</td><td>${fmtDate(o?.createdAt)}</td><td style="color:var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px;">${id}</td></tr>`;
+          const status = o?.status || 'pending';
+          return `
+            <article class="order">
+              <div class="order-top">
+                <h4 class="dish">${o?.dish || ''}</h4>
+                <span class="status ${statusClass(status)}">${status}</span>
+              </div>
+              <div class="details">
+                <div>Created: ${fmtDate(o?.createdAt)}</div>
+                <div>Updated: ${fmtDate(o?.statusUpdatedAt)}</div>
+                <div class="mono">ID: ${id}</div>
+              </div>
+            </article>
+          `;
         }).join('');
       } catch (e) {
         el('orderCount').textContent = '-';
-        body.innerHTML = `<tr><td colspan="4" style="color:var(--red);">Failed to load orders. Is the API reachable at ${apiBase}/orders?</td></tr>`;
+        body.innerHTML = `<div class="empty">Failed to load orders. ${e.message || e}</div>`;
       }
     }
+
     async function createOrder() {
       const msg = el('createMsg');
       msg.textContent = '';
       const dish = el('dish').value.trim();
-      if (!dish) { msg.textContent = 'Enter a dish name first.'; return; }
+
+      if (!dish) {
+        msg.textContent = 'Enter a dish name first.';
+        return;
+      }
+
       el('createBtn').disabled = true;
       try {
-        const r = await fetch(apiBase + '/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dish }) });
+        const r = await fetch(apiBase + '/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dish })
+        });
         const data = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(data?.error || `HTTP ${r.status}`);
         msg.textContent = `Created: ${data.dish} (${data.status})`;
         el('dish').value = '';
         await refreshOrders();
         await refreshHealth();
-      } catch (e) { msg.textContent = `Create failed: ${e.message || e}`; }
-      finally { el('createBtn').disabled = false; }
+      } catch (e) {
+        msg.textContent = `Create failed: ${e.message || e}`;
+      } finally {
+        el('createBtn').disabled = false;
+      }
     }
+
     el('createBtn').addEventListener('click', createOrder);
     el('refreshBtn').addEventListener('click', refreshOrders);
-    el('dish').addEventListener('keydown', (e) => { if (e.key === 'Enter') createOrder(); });
-    refreshHealth(); refreshOrders(); setInterval(refreshHealth, 8000); setInterval(refreshOrders, 5000);
+    el('dish').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') createOrder();
+    });
+
+    refreshHealth();
+    refreshOrders();
+    setInterval(refreshHealth, 8000);
+    setInterval(refreshOrders, 5000);
   </script>
 </body>
 </html>
